@@ -51,12 +51,15 @@ class Agent():
                     self.forward_command("start_agv_follow")
 
                 # 語音團隊
-                elif recv_data.decode() == "follow me":
+                elif recv_data.decode() == "follow_me":
                     data.outb += b"OK"
                     self.forward_command("start_agv_follow")
-                elif recv_data.decode() == "go to nursing station":
+                elif recv_data.decode() == "go_to_nursing_station":
                     data.outb += b"OK"
-                    self.forward_command("start_agv_follow")
+                    self.forward_command("self_move")
+                elif recv_data.decode() == "stop":
+                    data.outb += b"OK"
+                    self.forward_command("end_agv_follow")
                     
                 # 機器人團隊
                 elif recv_data.decode() == "agv_shut_down":

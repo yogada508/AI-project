@@ -17,6 +17,10 @@ import argparse
 (1) follow me
 (2) go to nursing station
 
+腦波團隊
+(1) Idle
+(2) move
+
 量測團隊
 (1) measurement_done
 '''
@@ -30,6 +34,8 @@ class Agent():
         self.dst_ip = dst_ip
         self.dst_port = dst_port
         self.sel = selectors.DefaultSelector()
+        self.location_list = ["A", "B"]
+        self.robot_location = "O"
 
     def accept_wrapper(self, sock):
         conn, addr = sock.accept()  # Should be ready to read
@@ -48,7 +54,7 @@ class Agent():
                 # 量測團隊
                 if recv_data.decode() == "measurement_done":
                     data.outb += b"OK"
-                    self.forward_command("start_agv_follow")
+                    # self.forward_command("start_agv_follow")
 
                 # 語音團隊
                 elif recv_data.decode() == "follow_me":
@@ -60,13 +66,29 @@ class Agent():
                 elif recv_data.decode() == "stop":
                     data.outb += b"OK"
                     self.forward_command("end_agv_follow")
+
+                # 定位團隊
+                elif recv_data.decode() in self.location_list:
+                    data.outb += b"OK"
+                    self.robot_location = recv_data.decode()
+
+                # 腦波團隊
+                elif recv_data.decode() == "Idle":
+                    data.outb += b"OK"
+                elif recv_data.decode() == "move":
+                    data.outb += b"OK"
+                    if self.robot_location == "A":
+                        self.forward_command("self_move_AO")
+                    elif self.robot_location == "O":
+                        self.forward_command("self_move_OA")
                     
                 # 機器人團隊
                 elif recv_data.decode() == "agv_shut_down":
                     data.outb += b"OK"
                     self.forward_command("debug")
                 else:
-                    data.outb += b"Wrong command!"
+                    data.outb += b"Wrong Command"
+                
             else:
                 print(f"Closing connection to {data.addr}")
                 self.sel.unregister(sock)

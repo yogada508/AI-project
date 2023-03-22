@@ -34,8 +34,10 @@ class Agent():
         self.dst_ip = dst_ip
         self.dst_port = dst_port
         self.sel = selectors.DefaultSelector()
-        self.location_list = ["A", "B"]
-        self.robot_location = "O"
+        self.location_list = [i for i in range(1,26)] # 1 ~ 25
+        self.room_a = [i for i in range(5,8)] # 5 ~ 7
+        self.room_o = [i for i in range(17,26)] # 17 ~ 25
+        self.robot_location = "20"
 
     def accept_wrapper(self, sock):
         conn, addr = sock.accept()  # Should be ready to read
@@ -77,9 +79,9 @@ class Agent():
                     data.outb += b"OK"
                 elif recv_data.decode() == "move":
                     data.outb += b"OK"
-                    if self.robot_location == "A":
+                    if self.robot_location in self.room_a:
                         self.forward_command("self_move_AO")
-                    elif self.robot_location == "O":
+                    elif self.robot_location in self.room_o:
                         self.forward_command("self_move_OA")
                     
                 # 機器人團隊

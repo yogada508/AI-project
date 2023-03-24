@@ -34,9 +34,9 @@ class Agent():
         self.dst_ip = dst_ip
         self.dst_port = dst_port
         self.sel = selectors.DefaultSelector()
-        self.location_list = [i for i in range(1,26)] # 1 ~ 25
-        self.room_a = [i for i in range(5,8)] # 5 ~ 7
-        self.room_o = [i for i in range(17,26)] # 17 ~ 25
+        self.location_list = [str(i) for i in range(1,26)] # 1 ~ 25
+        self.room_a = [str(i) for i in range(5,8)] # 5 ~ 7
+        self.room_o = [str(i) for i in range(17,26)] # 17 ~ 25
         self.robot_location = "20"
 
     def accept_wrapper(self, sock):
@@ -53,6 +53,7 @@ class Agent():
         if mask & selectors.EVENT_READ:
             recv_data = sock.recv(1024)  # Should be ready to read
             if recv_data:
+                print(f"Receive '{recv_data.decode()}' from {data.addr}")
                 # 量測團隊
                 if recv_data.decode() == "measurement_done":
                     data.outb += b"OK"
@@ -64,7 +65,7 @@ class Agent():
                     self.forward_command("start_agv_follow")
                 elif recv_data.decode() == "go_to_nursing_station":
                     data.outb += b"OK"
-                    self.forward_command("self_move")
+                    self.forward_command("self_move_BO")
                 elif recv_data.decode() == "stop":
                     data.outb += b"OK"
                     self.forward_command("end_agv_follow")
@@ -73,6 +74,7 @@ class Agent():
                 elif recv_data.decode() in self.location_list:
                     data.outb += b"OK"
                     self.robot_location = recv_data.decode()
+                    print("Update robot location to:", self.robot_location)
 
                 # 腦波團隊
                 elif recv_data.decode() == "Idle":
@@ -83,7 +85,7 @@ class Agent():
                         self.forward_command("self_move_AO")
                     elif self.robot_location in self.room_o:
                         self.forward_command("self_move_OA")
-                    
+                     
                 # 機器人團隊
                 elif recv_data.decode() == "agv_shut_down":
                     data.outb += b"OK"

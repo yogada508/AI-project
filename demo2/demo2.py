@@ -66,7 +66,7 @@ class Agent():
                         data.outb += b"robot_busy" # Robot busy
                 elif message == "Idle":
                     data.outb += b"OK"
-                    self.forward_command("self_move_BO")
+                    # self.forward_command("self_move_BO")
 
                 # 機器人團隊
                 elif message == "agv_shut_down":

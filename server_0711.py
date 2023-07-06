@@ -30,14 +30,14 @@ def service_connection(key, mask):
                 print("開始移動到配膳間")
                 time.sleep(3)
                 print("抵達配膳間, 停止移動")
-                print("病人A想喝水")
+                print("住民A想喝水")
                 data.outb += b"OK"
 
             elif message == "self_move_WA":
                 print("已收到照護人員放置的水")
-                print("將從配膳間前往病房A")
+                print("將從配膳間前往住房A")
                 time.sleep(3)
-                print("抵達病房A, 停止移動")
+                print("抵達住房A, 停止移動")
                 print("水帶來了")
                 data.outb += b"OK"
 
